@@ -3,7 +3,6 @@ export function getTodoList(owner) {
     return JSON.parse(localStorage.getItem(owner));
   }
 }
-console.log("hello");
 export function createTodoItem({ owner, name }) {
   let done = false;
   let localItems;
