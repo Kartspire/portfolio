@@ -1,0 +1,113 @@
+@import url(zeroing.css);
+:root {
+  --main-color: #9873ff;
+}
+a{
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+#load-screen{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background: black;
+}
+.container{
+  height: 100%;
+}
+/* -------------------------------------------------HEADER----------------------------------------------------------- */
+.logo {
+  background: url('../assets/img/logo.png') 0 0 / auto
+    no-repeat;
+  height: 50px;
+  width: 50px;
+}
+.header {
+  z-index: 100;
+  height: 90px;
+  background: white;
+  -webkit-box-shadow: 0px 0px 35px 3px
+    rgba(34, 60, 80, 0.35);
+  -moz-box-shadow: 0px 0px 35px 3px rgba(34, 60, 80, 0.35);
+  box-shadow: 0px 0px 35px 3px rgba(34, 60, 80, 0.35);
+}
+/* -------------------------------------------------HEADER----------------------------------------------------------- */
+
+/* -------------------------------------------------SECTION-CLIENTS----------------------------------------------------------- */
+.table-header li{
+  cursor: pointer;
+}
+
+.add-client-btn {
+  position: relative;
+  padding: 0;
+  width: 216px;
+  height: 44px;
+  align-self: center;
+  border-color: var(--main-color) !important;
+  color: var(--main-color);
+  background-color: transparent;
+}
+.btn-icon {
+  position: absolute;
+  left: 10%;
+  top: 30%;
+}
+.btn-text {
+  line-height: 0;
+  position: absolute;
+  top: 50%;
+  left: 25%;
+}
+.add-client-btn:hover {
+  color: white;
+  background-color: var(--main-color);
+}
+.add-client-btn:hover .btn-icon path {
+  fill: white;
+}
+/* -------------------------------------------------SECTION-CLIENTS----------------------------------------------------------- */
+
+/* -------------------------------------------------ADD-CLIENT-MODAL----------------------------------------------------------- */
+.clients {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+.client:last-child{
+  margin-bottom: 50px;
+}
+.contacts {
+  background: rgba(200, 197, 209, 0.2);
+}
+.btn-save-client {
+  width: 147px;
+  height: 44px;
+  color: white;
+  background: var(--main-color);
+}
+.btn:hover {
+  color: none;
+}
+.btn-save-client:hover {
+  -webkit-box-shadow: 0px 0px 20px 5px
+    rgba(152, 115, 255, 0.8);
+  -moz-box-shadow: 0px 0px 20px 5px rgba(152, 115, 255, 0.8);
+  box-shadow: 0px 0px 20px 5px rgba(152, 115, 255, 0.8);
+}
+.select-wrapper {
+  width: 123px;
+}
+.contact-cancel {
+  width: 27px;
+  cursor: pointer;
+  background: url('../assets/img/icons/cancel.svg') center
+    center no-repeat;
+}
+/* -------------------------------------------------ADD-CLIENT-MODAL----------------------------------------------------------- */
+/* -------------------------------------------------ICONS----------------------------------------------------------- */
+.icons-gutter:not(:last-child){
+  margin-right: 10px;
+}
+/* -------------------------------------------------ICONS----------------------------------------------------------- */
