@@ -2,7 +2,7 @@ const bootstrap = require('bootstrap');
 import IMask from 'imask';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/style.css';
-import { Client, getClients, getClient, postClient, patchClient, deleteClient, renderClient } from './client';
+import { Client, getClients, getClient,  deleteClient, renderClient } from './client';
 import { createNewContact, Contact } from './contacts';
 import { sortClients } from './sort';
 import { searchClientDelay, clearSearchClient } from './search';
@@ -62,7 +62,7 @@ addForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   try {
     const client = new Client(addSurname.value, addName.value, addLastname.value, getContacts());
-    postClient(client).then((res) => {
+    client.postClient().then((res) => {
       clientsList.append(renderClient(res));
       bootstrapAddClientModal.hide();
     });
@@ -151,10 +151,8 @@ deleteClientModal.addEventListener('show.bs.modal', (e) => {
 patchClientModal.addEventListener('show.bs.modal', (e) => {
   clientId = e.relatedTarget.parentElement.dataset.clientId;
   clientElement = e.relatedTarget.parentElement.parentElement;
-  console.log(clientId);
 
   getClient(clientId).then((res) => {
-    console.log(res);
     patchSurname.value = res.surname;
     patchName.value = res.name;
     patchLastname.value = res.lastName;
@@ -175,7 +173,7 @@ patchClientForm.addEventListener('submit', (e) => {
   e.preventDefault();
   try {
     const client = new Client(patchSurname.value, patchName.value, patchLastname.value, getContacts());
-    patchClient(client, clientId).then((res) => {
+    client.patchClient(clientId).then((res) => {
       clientElement.remove();
       clientsList.append(renderClient(res));
       bootstrapPatchClientModal.hide();
