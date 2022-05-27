@@ -1,6 +1,7 @@
 @import url(zeroing.css);
 :root {
   --main-color: #9873ff;
+  --dark-main: #563196;
 }
 a {
   color: black;
@@ -86,7 +87,7 @@ a {
   background: var(--main-color);
 }
 .btn:hover {
-  color: white;
+  color: var(--dark-main);
 }
 .btn-save-client:hover {
   -webkit-box-shadow: 0px 0px 20px 5px rgba(152, 115, 255, 0.8);
@@ -103,7 +104,7 @@ a {
 }
 /* -------------------------------------------------ADD-CLIENT-MODAL----------------------------------------------------------- */
 /* -------------------------------------------------DELETE-CLIENT-MODAL----------------------------------------------------------- */
-#delete-client-button {
+#delete-client-modal-button {
   border: none;
   background: var(--main-color);
   color: white;

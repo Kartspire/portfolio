@@ -1,46 +1,70 @@
-import { el } from "redom";
-import { renderContactIcons } from "./contacts";
+import { el } from 'redom';
+import { getContacts, addNewContact, renderContactIcons } from './contacts';
+import { ValidationError } from './validation';
+import {
+  clientName,
+  clientSurname,
+  clientLastName,
+  contactList,
+  clientForm,
+  bootstrapClientModal,
+  createNewClient,
+  clientModalLabel,
+} from './index';
+
+const clientModal = document.querySelector('#client-modal'),
+  deleteClientModalButton = document.querySelector('#delete-client-modal-button'),
+  surnameLabel = document.querySelector('#surname-label'),
+  nameLabel = document.querySelector('#name-label'),
+  lastNameLabel = document.querySelector('#lastName-label');
 
 //Создание объекта клиента
 export class Client {
-  constructor(surname, name, lastname, contacts) {
+  constructor(name, surname, lastName, contacts, id, createdAt, updatedAt) {
     this.surname = surname;
     this.name = name;
-    this.lastname = lastname;
+    this.lastName = lastName;
     this.contacts = contacts;
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    // this.inputName = inputName;
   }
-  // Сеттер-геттер на фамилию
-  set surname(value) {
+
+  validation(value, field, inp, label) {
     if (value.trim().length < 2) {
-      throw new Error("Слишком короткая фамилия");
-    } else {
-      this._surname = value;
+      throw new ValidationError(`${field} не может содержать меньше двух символов`, inp, label);
     }
+    if (/\d+/g.test(value)) {
+      throw new ValidationError(`${field} не может содержать цифры`, inp, label);
+    }
+    label.textContent = '';
+    inp.classList.remove('is-invalid');
+    return value;
+  }
+
+  // Сеттер-геттер на имя
+  set surname(value) {
+    this._surname = this.validation(value, 'Фамилия', clientSurname, surnameLabel);
   }
   get surname() {
     return this._surname;
   }
-  // Сеттер-геттер на имя
+
+  // Сеттер-геттер на фамилию
   set name(value) {
-    if (value.trim().length < 2) {
-      throw new Error("Слишком короткое имя");
-    } else {
-      this._name = value;
-    }
+    this._name = this.validation(value, 'Имя', clientName, nameLabel);
   }
   get name() {
     return this._name;
   }
+
   // Сеттер-геттер на отчество
-  set lastname(value) {
-    if (value.trim().length < 2) {
-      throw new Error("Слишком коротке отчество");
-    } else {
-      this._lastname = value;
-    }
+  set lastName(value) {
+    this._lastName = this.validation(value, 'Отчество', clientLastName, lastNameLabel);
   }
-  get lastname() {
-    return this._lastname;
+  get lastName() {
+    return this._lastName;
   }
   // Сеттер-геттер на контакты
   set contacts(value) {
@@ -49,66 +73,203 @@ export class Client {
   get contacts() {
     return this._contacts;
   }
+  // //Сеттер-геттер на ID
+  set id(value) {
+    this._id = value;
+  }
+  get id() {
+    return this._id;
+  }
 
-  //Отправка клиента на сервер
-  async postClient() {
-    const responce = await fetch("http://localhost:3000/api/clients", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+  //Сеттер и гетер на время обновления
+  set updatedAt(value) {
+    this._updatedAt = reformTime(value);
+  }
+  get updatedAt() {
+    return this._updatedAt;
+  }
+  //Сеттер и геттер на время создания
+  set createdAt(value) {
+    this._createdAt = reformTime(value);
+  }
+  get createdAt() {
+    return this._createdAt;
+  }
+
+  //Изменить данные клиента
+  async patchClient() {
+    const responce = await fetch(`http://localhost:3000/api/clients/${this.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-type': 'application/json' },
       body: JSON.stringify({
         name: this.name,
         surname: this.surname,
-        lastName: this.lastname,
+        lastName: this.lastName,
         contacts: this.contacts,
       }),
     });
     return await responce.json();
   }
 
-  //Изменить данные клиента
- async  patchClient(clientId) {
-  const responce = await fetch(
-    `http://localhost:3000/api/clients/${clientId}`,
-    {
-      method: "PATCH",
-      headers: { "Content-type": "application/json" },
+  //Данные одного клиента с сервера
+  async getClient() {
+    const responce = await fetch(`http://localhost:3000/api/clients/${this.id}`);
+    return await responce.json();
+  }
+
+  //Отправка клиента на сервер
+  async postClient() {
+    const responce = await fetch('http://localhost:3000/api/clients', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: this.name,
         surname: this.surname,
-        lastName: this.lastname,
+        lastName: this.lastName,
         contacts: this.contacts,
       }),
-    }
-  );
-  return await responce.json();
+    });
+    return await responce.json();
+  }
+
+  //Удалить клиента
+  async deleteClient() {
+    await fetch(`http://localhost:3000/api/clients/${this.id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
-  
-}
-
-//Данные клиентов с сервера
-export async function getClients() {
-  const responce = await fetch("http://localhost:3000/api/clients");
-  return await responce.json();
-}
-
- //Данные одного клиента с сервера
- export async function getClient(clientId) {
-  const responce = await fetch(
-    `http://localhost:3000/api/clients/${clientId}`
-  );
-  return await responce.json();
-}
-
-//Удалить клиента
-export async function deleteClient(clientId) {
-  await fetch(`http://localhost:3000/api/clients/${clientId}`, {
-    method: "DELETE",
+//Функия отрисовки клиента
+export function renderClient(client) {
+  const clientElement = el('li', {
+    class: 'client list-group-item row d-flex px-0 justify-content-between',
   });
+  const clientElementInfoWrapper = el('div', { class: 'col-8 d-flex' });
+  const clientElementId = el('div', { class: 'col-2', id: 'client-id' }, client.id);
+  const clientElementFio = el(
+    'div',
+    { class: 'col-4 px-4 fio' },
+    `${client.surname} ${client.name} ${client.lastName}`
+  );
+  const clientElementCreatedAt = el(
+    'div',
+    { class: 'col-3 px-4' },
+    `${client.createdAt.reformedDate} ${client.createdAt.reformedTime}`
+  );
+  const clientElementUpdatedAt = el(
+    'div',
+    { class: 'col-3 px-4' },
+    `${client.updatedAt.reformedDate} ${client.updatedAt.reformedTime}`
+  );
+  const clientElementRigthBarWrapper = el('div', {
+    class: 'col-4 d-flex justify-content-between',
+  });
+  const clientElementBtnWrapper = el('div', { class: 'col-6' });
+  let clientElementContacts = renderContactIcons(client.contacts);
+  const clientElementPatchButton = el(
+    'button',
+    {
+      class: 'col-6 px-2 btn border-0 patchClient',
+      'data-bs-toggle': 'modal',
+      'data-bs-target': '#client-modal',
+    },
+    'изменить'
+  );
+  const clientElementDeleteButton = el(
+    'button',
+    {
+      class: 'col-6 px-2 btn border-0 deleteClient',
+      'data-bs-toggle': 'modal',
+      'data-bs-target': '#delete-client-modal',
+    },
+    'удалить'
+  );
+  clientElementInfoWrapper.append(clientElementId, clientElementFio, clientElementCreatedAt, clientElementUpdatedAt);
+  clientElementBtnWrapper.append(clientElementPatchButton, clientElementDeleteButton);
+  clientElementRigthBarWrapper.append(clientElementContacts, clientElementBtnWrapper);
+  clientElement.append(clientElementInfoWrapper, clientElementRigthBarWrapper);
+
+  // Удалить клиента
+  clientElement.querySelector('.deleteClient').addEventListener('click', (e) => {
+    deleteClientModalButton.addEventListener(
+      'click',
+      () => {
+        client.deleteClient();
+        clientElement.remove();
+      },
+      { once: true }
+    );
+  });
+
+  const renewClient = function (evt) {
+    evt.preventDefault();
+    try {
+      client.surname = clientSurname.value;
+      client.name = clientName.value;
+      client.lastName = clientLastName.value;
+      client.contacts = getContacts();
+      client.patchClient().then((res) => {
+        bootstrapClientModal.hide();
+        clientElementFio.textContent = `${res.surname} ${res.name} ${res.lastName}`;
+        clientElementUpdatedAt.textContent = `${reformTime(res.updatedAt).reformedDate} ${
+          reformTime(res.updatedAt).reformedTime
+        }`;
+        clientElementContacts.remove();
+        clientElementContacts = renderContactIcons(res.contacts);
+        clientElementRigthBarWrapper.prepend(clientElementContacts);
+      });
+    } catch (error) {
+      error.showErrorMessage();
+    }
+  };
+
+  //Изменить клиента
+  clientElement.querySelector('.patchClient').addEventListener('click', () => {
+    clientSurname.value = client.surname;
+    clientName.value = client.name;
+    clientLastName.value = client.lastName;
+    clientModalLabel.textContent = 'Изменить данные';
+    client.contacts.forEach((e) => {
+      const newContact = addNewContact(contactList);
+      newContact.querySelector('input').value = e.value;
+      Array.from(newContact.querySelector('select').querySelectorAll('option')).forEach((elem) => {
+        if (elem.value === e.type) {
+          elem.selected = true;
+          return;
+        }
+      });
+    });
+    clientForm.addEventListener('submit', renewClient);
+  });
+
+  //Очистить фомру закрытии модального окна
+  clientModal.addEventListener('hide.bs.modal', () => {
+    clientSurname.classList.remove('is-valid', 'is-invalid');
+    clientName.classList.remove('is-valid', 'is-invalid');
+    clientLastName.classList.remove('is-valid', 'is-invalid');
+    clientSurname.value = '';
+    clientName.value = '';
+    clientLastName.value = '';
+    const contactElements = Array.from(contactList.children);
+    contactElements.forEach((e) => e.remove());
+    clientForm.removeEventListener('submit', createNewClient);
+    clientForm.removeEventListener('submit', renewClient);
+  });
+
+  return {
+    clientElement,
+    clientElementId,
+    clientElementFio,
+    clientElementCreatedAt,
+    clientElementUpdatedAt,
+    clientElementContacts,
+  };
 }
 
 //Функция правильного формата времени
-function reformTime(date) {
+function reformTime(dateFromServer) {
+  const date = new Date(dateFromServer);
   const format = (date) => (date < 10 ? `0${date}` : date.toString());
 
   const day = date.getDate();
@@ -122,59 +283,13 @@ function reformTime(date) {
   return { reformedDate, reformedTime };
 }
 
-//Функия отрисовки клиента
-export function renderClient(client) {
-  const clientElement = el(
-    "li",
-    { class: "client list-group-item row d-flex" },
-    [
-      el("div", { class: "col-2", id: "client-id" }, client.id),
-      el(
-        "div",
-        { class: "col-2" },
-        `${client.surname} ${client.name} ${client.lastName}`
-      ),
-      el(
-        "div",
-        { class: "col-2" },
-        `${reformTime(new Date(client.createdAt)).reformedDate} ${
-          reformTime(new Date(client.createdAt)).reformedTime
-        }`
-      ),
-      el(
-        "div",
-        { class: "col-2" },
-        `${reformTime(new Date(client.updatedAt)).reformedDate} ${
-          reformTime(new Date(client.updatedAt)).reformedTime
-        }`
-      ),
-      renderContactIcons(client),
-      el(
-        "div",
-        {
-          class: "col-2 d-flex justify-content-between",
-          "data-client-id": `${client.id}`,
-        },
-        [
-          el(
-            "a",
-            {
-              "data-bs-toggle": "modal",
-              "data-bs-target": "#patch-client-modal",
-            },
-            "изменить"
-          ),
-          el(
-            "a",
-            {
-              "data-bs-toggle": "modal",
-              "data-bs-target": "#delete-client-modal",
-            },
-            "удалить"
-          ),
-        ]
-      ),
-    ]
-  );
-  return clientElement;
+//Данные клиентов с сервера
+export async function getClients() {
+  const responce = await fetch('http://localhost:3000/api/clients');
+  return await responce.json();
 }
+
+// Очистить форму изменения при закрытии модального окна
+// patchClientModal.addEventListener('hidden.bs.modal', () => {
+//   clearForm(patchSurname, patchName, patchLastName, patchContactList);
+// });

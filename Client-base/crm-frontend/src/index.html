@@ -22,23 +22,30 @@
           <h1>Клиенты</h1>
           <div class="row">
             <ul id="sort-button" class="table-header d-flex col-8 mb-3">
-              <li data-sort-number="0" class="col-3">ID</li>
-              <li data-sort-number="1" class="col-3">Фамилия Имя Отчество</li>
-              <li data-sort-number="2" class="col-3">Дата и время создания</li>
-              <li data-sort-number="3" class="col-3">Последне изменение</li>
+              <li class="col-2"><button class="btn w-100 text-start px-4" data-sort-number="0">ID</button></li>
+              <li class="col-4">
+                <button class="btn w-100 text-start" data-sort-number="1">Фамилия Имя Отчество</button>
+              </li>
+              <li class="col-3">
+                <button class="btn w-100 text-start" data-sort-number="2">Дата и время создания</button>
+              </li>
+              <li class="col-3">
+                <button class="btn w-100 text-start" data-sort-number="3">Последнее изменение</button>
+              </li>
             </ul>
-            <ul class="d-flex col-4">
-              <li class="col-6">Контакты</li>
-              <li class="col-6">Действия</li>
+            <ul class="d-flex col-4 mb-3 align-items-center">
+              <li class="col-6 text-center">Контакты</li>
+              <li class="col-6 text-start px-4">Действия</li>
             </ul>
           </div>
 
           <ul class="flex-grow-1 list-group" id="clients-list"></ul>
           <button
+            id="create-client"
             type="button"
             class="flex-shrink-1 add-client-btn btn border border-2 rounded-0"
             data-bs-toggle="modal"
-            data-bs-target="#add-client-modal"
+            data-bs-target="#client-modal"
           >
             <svg
               class="btn-icon"
@@ -58,46 +65,28 @@
           <!-- ADD CLIENT MODAL -->
           <div
             class="modal fade"
-            id="add-client-modal"
+            id="client-modal"
             tabindex="-1"
-            aria-labelledby="add-client-modal-label"
+            aria-labelledby="client-modal-label"
             aria-hidden="true"
           >
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="add-client-modal-label">Новый клиент</h5>
+                  <h5 class="modal-title" id="client-modal-label"></h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <form id="add-form" action="" class="d-flex flex-column">
-                    <input
-                      oninput="this.value=this.value.replace(/[^a-zA-Zа-яёА-ЯЁ ]/g,'');"
-                      required
-                      id="add-surname"
-                      type="text"
-                      class="border-bottom form-control mb-2"
-                      placeholder="Фамилия"
-                    />
-                    <input
-                      oninput="this.value=this.value.replace(/[^a-zA-Zа-яёА-ЯЁ ]/g,'');"
-                      required
-                      id="add-name"
-                      type="text"
-                      class="form-control mb-2"
-                      placeholder="Имя"
-                    />
-                    <input
-                      oninput="this.value=this.value.replace(/[^a-zA-Zа-яёА-ЯЁ ]/g,'');"
-                      required
-                      id="add-lastname"
-                      type="text"
-                      class="form-control mb-3"
-                      placeholder="Отчество"
-                    />
+                  <form id="form" action="" class="d-flex flex-column">
+                    <label for="surname" id="surname-label" class="text-danger"></label>
+                    <input id="surname" type="text" class="form-control mb-2" placeholder="Фамилия" />
+                    <label for="name" id="name-label" class="text-danger"></label>
+                    <input id="name" type="text" class="form-control mb-2" placeholder="Имя" />
+                    <label for="lastName" id="lastName-label" class="text-danger"></label>
+                    <input id="lastName" type="text" class="form-control mb-3" placeholder="Отчество" />
                     <div class="contacts d-flex flex-column py-3 align-items-center justify-content-center">
-                      <ul class="list-group align-self-stretch" id="add-contact-list"></ul>
-                      <div class="btn btn-contact" id="add-contact-btn">
+                      <ul class="list-group align-self-stretch" id="contact-list"></ul>
+                      <button type="button" class="btn btn-contact" id="add-contact-btn">
                         <svg width="16" height="16" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             d="M8.00001 4.66665C7.63334 4.66665 7.33334 4.96665 7.33334 5.33331V7.33331H5.33334C4.96668 7.33331 4.66668 7.63331 4.66668 7.99998C4.66668 8.36665 4.96668 8.66665 5.33334 8.66665H7.33334V10.6666C7.33334 11.0333 7.63334 11.3333 8.00001 11.3333C8.36668 11.3333 8.66668 11.0333 8.66668 10.6666V8.66665H10.6667C11.0333 8.66665 11.3333 8.36665 11.3333 7.99998C11.3333 7.63331 11.0333 7.33331 10.6667 7.33331H8.66668V5.33331C8.66668 4.96665 8.36668 4.66665 8.00001 4.66665ZM8.00001 1.33331C4.32001 1.33331 1.33334 4.31998 1.33334 7.99998C1.33334 11.68 4.32001 14.6666 8.00001 14.6666C11.68 14.6666 14.6667 11.68 14.6667 7.99998C14.6667 4.31998 11.68 1.33331 8.00001 1.33331ZM8.00001 13.3333C5.06001 13.3333 2.66668 10.94 2.66668 7.99998C2.66668 5.05998 5.06001 2.66665 8.00001 2.66665C10.94 2.66665 13.3333 5.05998 13.3333 7.99998C13.3333 10.94 10.94 13.3333 8.00001 13.3333Z"
@@ -105,10 +94,12 @@
                           />
                         </svg>
                         Добавить контакт
-                      </div>
+                      </button>
                     </div>
                     <div class="modal-footer border-0 align-self-center">
-                      <button class="btn btn-save-client rounded-0">Сохранить</button>
+                      <button type="submit" id="save-client-button" class="btn btn-save-client rounded-0">
+                        Сохранить
+                      </button>
                     </div>
                   </form>
                 </div>
@@ -141,7 +132,7 @@
                   <button
                     type="button"
                     class="py-2 px-5 btn rounded-0"
-                    id="delete-client-button"
+                    id="delete-client-modal-button"
                     data-bs-dismiss="modal"
                   >
                     Удалить
@@ -152,7 +143,7 @@
             </div>
           </div>
           <!-- PATCH CLIENT MODAL -->
-          <div
+          <!-- <div
             class="modal fade"
             id="patch-client-modal"
             tabindex="-1"
@@ -167,6 +158,7 @@
                 </div>
                 <div class="modal-body">
                   <form id="patch-form" action="" class="d-flex flex-column">
+                    <label for="patch-surname" id="patch-surname-label" class="text-danger"></label>
                     <input
                       id="patch-surname"
                       type="text"
@@ -177,7 +169,7 @@
                     <input id="patch-lastname" type="text" class="form-control mb-3" placeholder="Отчество" />
                     <div class="contacts d-flex flex-column py-3 align-items-center justify-content-center">
                       <ul class="list-group align-self-stretch" id="patch-contact-list"></ul>
-                      <div class="btn btn-contact" id="patch-contact-btn">
+                      <button type="button" class="btn btn-contact" id="patch-contact-btn">
                         <svg width="16" height="16" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             d="M8.00001 4.66665C7.63334 4.66665 7.33334 4.96665 7.33334 5.33331V7.33331H5.33334C4.96668 7.33331 4.66668 7.63331 4.66668 7.99998C4.66668 8.36665 4.96668 8.66665 5.33334 8.66665H7.33334V10.6666C7.33334 11.0333 7.63334 11.3333 8.00001 11.3333C8.36668 11.3333 8.66668 11.0333 8.66668 10.6666V8.66665H10.6667C11.0333 8.66665 11.3333 8.36665 11.3333 7.99998C11.3333 7.63331 11.0333 7.33331 10.6667 7.33331H8.66668V5.33331C8.66668 4.96665 8.36668 4.66665 8.00001 4.66665ZM8.00001 1.33331C4.32001 1.33331 1.33334 4.31998 1.33334 7.99998C1.33334 11.68 4.32001 14.6666 8.00001 14.6666C11.68 14.6666 14.6667 11.68 14.6667 7.99998C14.6667 4.31998 11.68 1.33331 8.00001 1.33331ZM8.00001 13.3333C5.06001 13.3333 2.66668 10.94 2.66668 7.99998C2.66668 5.05998 5.06001 2.66665 8.00001 2.66665C10.94 2.66665 13.3333 5.05998 13.3333 7.99998C13.3333 10.94 10.94 13.3333 8.00001 13.3333Z"
@@ -185,16 +177,18 @@
                           />
                         </svg>
                         Добавить контакт
-                      </div>
+                      </button>
                     </div>
                     <div class="modal-footer border-0 align-self-center">
-                      <button class="btn btn-save-client rounded-0" id="patch-client-button">Сохранить</button>
+                      <button type="submit" class="btn btn-save-client rounded-0" id="patch-client-button">
+                        Сохранить
+                      </button>
                     </div>
                   </form>
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </section>
     </div>
