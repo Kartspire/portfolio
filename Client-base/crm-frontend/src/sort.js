@@ -1,7 +1,6 @@
 //Сортировка
-const compareElements = (a, b, sortId) => {
-  return a.childNodes[sortId].textContent > b.childNodes[sortId].textContent ? 1 : -1;
-};
+const compareElements = (a, b, sortId) =>
+  a.firstChild.childNodes[sortId].textContent > b.firstChild.childNodes[sortId].textContent ? 1 : -1;
 
 export function sortClients(clientsElems, clientsList, switcher, sortId) {
   clientsElems.forEach((elem) => elem.remove());
