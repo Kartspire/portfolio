@@ -7,12 +7,16 @@ import { sortClients } from './sort';
 import { searchClientDelay, clearSearchClient } from './search';
 
 export const clientSurname = document.querySelector('#surname'),
+  clientModal = document.querySelector('#client-modal'),
   clientName = document.querySelector('#name'),
   clientLastName = document.querySelector('#lastName'),
   clientForm = document.querySelector('#form'),
   contactList = document.querySelector('#contact-list'),
   bootstrapClientModal = new bootstrap.Modal(document.querySelector('#client-modal')),
-  clientModalLabel = document.querySelector('#client-modal-label');
+  clientModalLabel = document.querySelector('#client-modal-label'),
+  surnameLabel = document.querySelector('#surname-label'),
+  nameLabel = document.querySelector('#name-label'),
+  lastNameLabel = document.querySelector('#lastName-label');
 
 const addContactButton = document.querySelector('#add-contact-btn'),
   clientsList = document.querySelector('#clients-list'),
@@ -65,10 +69,6 @@ addContactButton.addEventListener('click', () => {
   addNewContact(contactList);
 });
 
-// patchContactButton.addEventListener('click', () => {
-//   addNewContact(patchContactList);
-// });
-
 // Сортировка
 let switcher = true;
 sortButton.addEventListener('click', (e) => {
@@ -87,72 +87,16 @@ clientsSearchInput.addEventListener('input', (e) => {
   searchClientDelay(e, clientsElems);
 });
 
-//Валидация
-// addSurname.addEventListener('input', function () {
-//   clearValidation();
-//   validationDelay(this.value, 'фамилия', this, addSurnameLabel, addClientButton);
-//   // validation(this.value, 'фамилия', this, addSurnameLabel, addClientButton);
-// });
-// patchSurname.addEventListener('input', function () {
-//   clearValidation();
-//   validationDelay(this.value, 'фамилия', this, patchSurnameLabel, patchClientButton);
-//   // validation(this.value, 'фамилия', this, patchSurnameLabel, patchClientButton);
-// });
-
-//Удаление клиента
-// function removeClient() {
-//   deleteClient(clientId);
-//   clientElement.remove();
-// }
-
-// deleteClientModal.addEventListener('show.bs.modal', (e) => {
-//   clientId = e.relatedTarget.parentElement.dataset.clientId;
-//   clientElement = e.relatedTarget.parentElement.parentElement;
-//   deleteClientButton.addEventListener('click', () => {
-//     removeClient();
-//     clientId = '';
-//   });
-//   deleteClientModal.addEventListener('keydown', function (e) {
-//     if (e.keyCode === 13) {
-//       removeClient();
-//       clientId = '';
-//       bootstrapDeleteClientModal.hide();
-//     }
-//   });
-// });
-
-//Изменить данные клиента
-// patchClientModal.addEventListener('show.bs.modal', (e) => {
-//   clientId = e.relatedTarget.parentElement.dataset.clientId;
-//   clientElement = e.relatedTarget.parentElement.parentElement;
-
-//   getClient(clientId).then((res) => {
-//     patchSurname.value = res.surname;
-//     patchName.value = res.name;
-//     patchLastname.value = res.lastName;
-//     res.contacts.forEach((e) => {
-//       const newContact = addNewContact(patchContactList);
-//       newContact.querySelector('input').value = e.value;
-//       Array.from(newContact.querySelector('select').querySelectorAll('option')).forEach((elem) => {
-//         if (elem.value === e.type) {
-//           elem.selected = true;
-//           return;
-//         }
-//       });
-//     });
-//   });
-// });
-
-// patchClientForm.addEventListener('submit', (e) => {
-//   e.preventDefault();
-//   try {
-//     const client = new Client(patchSurname.value, patchName.value, patchLastname.value, getContacts());
-//     client.patchClient(clientId).then((res) => {
-//       clientElement.remove();
-//       clientsList.append(renderClient(res));
-//       bootstrapPatchClientModal.hide();
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+clientModal.addEventListener('hide.bs.modal', () => {
+  clientSurname.classList.remove('is-valid', 'is-invalid');
+  clientName.classList.remove('is-valid', 'is-invalid');
+  clientLastName.classList.remove('is-valid', 'is-invalid');
+  clientSurname.value = '';
+  clientName.value = '';
+  clientLastName.value = '';
+  surnameLabel.textContent = '';
+  nameLabel.textContent = '';
+  lastNameLabel.textContent = '';
+  const contactElements = Array.from(contactList.children);
+  contactElements.forEach((e) => e.remove());
+});

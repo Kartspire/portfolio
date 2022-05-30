@@ -10,13 +10,13 @@ import {
   bootstrapClientModal,
   createNewClient,
   clientModalLabel,
+  clientModal,
+  surnameLabel,
+  nameLabel,
+  lastNameLabel,
 } from './index';
 
-const clientModal = document.querySelector('#client-modal'),
-  deleteClientModalButton = document.querySelector('#delete-client-modal-button'),
-  surnameLabel = document.querySelector('#surname-label'),
-  nameLabel = document.querySelector('#name-label'),
-  lastNameLabel = document.querySelector('#lastName-label');
+const deleteClientModalButton = document.querySelector('#delete-client-modal-button');
 
 //Создание объекта клиента
 export class Client {
@@ -202,6 +202,7 @@ export function renderClient(client) {
     );
   });
 
+  //Изменить данные клиента
   const renewClient = function (evt) {
     evt.preventDefault();
     try {
@@ -245,14 +246,6 @@ export function renderClient(client) {
 
   //Очистить фомру закрытии модального окна
   clientModal.addEventListener('hide.bs.modal', () => {
-    clientSurname.classList.remove('is-valid', 'is-invalid');
-    clientName.classList.remove('is-valid', 'is-invalid');
-    clientLastName.classList.remove('is-valid', 'is-invalid');
-    clientSurname.value = '';
-    clientName.value = '';
-    clientLastName.value = '';
-    const contactElements = Array.from(contactList.children);
-    contactElements.forEach((e) => e.remove());
     clientForm.removeEventListener('submit', createNewClient);
     clientForm.removeEventListener('submit', renewClient);
   });
